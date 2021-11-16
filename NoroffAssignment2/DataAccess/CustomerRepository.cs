@@ -1,4 +1,5 @@
-﻿using NoroffAssignment2.Models;
+﻿using NoroffAssignment2.DataAccess.Exceptions;
+using NoroffAssignment2.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -203,6 +204,87 @@ namespace NoroffAssignment2.DataAccess
                 Console.WriteLine("Sql exception msg:" + exception.Message);
             }
             return returnCustomer;
+        }
+
+        public void AddCustomer(CustomerModel customer)
+        {
+            try
+            {
+                using SqlConnection connection = new(Builder.ConnectionString);
+                connection.Open();
+
+                string sql = "INSERT INTO Customer (FirstName, LastName, Company, Address, City, State, Country, PostalCode, Phone, Fax, Email,SupportRepId)" +
+                    " VALUES(@firstName, @lastname, @company, @address, @city, @state, @country, @postalCode, @phone, @fax, @email, @supportRepId)";
+
+
+                using SqlCommand command = new(sql, connection);
+                command.Parameters.AddWithValue("@firstName", customer.FirstName);
+                command.Parameters.AddWithValue("@LastName", customer.LastName);
+                command.Parameters.AddWithValue("@company", customer.Company);
+                command.Parameters.AddWithValue("@address", customer.Address);
+                command.Parameters.AddWithValue("@city", customer.City);
+                command.Parameters.AddWithValue("@state", customer.State);
+                command.Parameters.AddWithValue("@country", customer.Country);
+                command.Parameters.AddWithValue("@postalCode", customer.PostalCode);
+                command.Parameters.AddWithValue("@phone", customer.Phone);
+                command.Parameters.AddWithValue("@fax", customer.Fax);
+                command.Parameters.AddWithValue("@email", customer.Email);
+                command.Parameters.AddWithValue("@supportRepId", customer.SupportRepId);
+
+
+                int result = command.ExecuteNonQuery();
+                if (result != 1)
+                {
+                    throw new CustomSqlException("Inserting a customer does not return 1");
+                }
+                
+            }
+            catch (SqlException exception)
+            {
+                Console.WriteLine("Sql exception msg:" + exception.Message);
+            }
+        }
+
+        public void UpdateCustomer(CustomerModel customer)
+        {
+            try
+            {
+                using SqlConnection connection = new(Builder.ConnectionString);
+                connection.Open();
+
+                string sql = "UPDATE Customer SET FirstName = @firstName, LastName = @lastname, Company = @company, " +
+                    "Address = @address, City = @city, State = @state, Country = @country, PostalCode = @postalCode, " +
+                    "Phone = @phone, Fax = @fax, Email = @email,SupportRepId = @supportRepId " +
+                    "WHERE CustomerId = @customerId";
+
+
+                using SqlCommand command = new(sql, connection);
+                command.Parameters.AddWithValue("@customerId", customer.CustomerId);
+                command.Parameters.AddWithValue("@firstName", customer.FirstName);
+                command.Parameters.AddWithValue("@LastName", customer.LastName);
+                command.Parameters.AddWithValue("@company", customer.Company);
+                command.Parameters.AddWithValue("@address", customer.Address);
+                command.Parameters.AddWithValue("@city", customer.City);
+                command.Parameters.AddWithValue("@state", customer.State);
+                command.Parameters.AddWithValue("@country", customer.Country);
+                command.Parameters.AddWithValue("@postalCode", customer.PostalCode);
+                command.Parameters.AddWithValue("@phone", customer.Phone);
+                command.Parameters.AddWithValue("@fax", customer.Fax);
+                command.Parameters.AddWithValue("@email", customer.Email);
+                command.Parameters.AddWithValue("@supportRepId", customer.SupportRepId);
+
+
+                int result = command.ExecuteNonQuery();
+                if (result != 1)
+                {
+                    throw new CustomSqlException("Updating a customer does not return 1");
+                }
+
+            }
+            catch (SqlException exception)
+            {
+                Console.WriteLine("Sql exception msg:" + exception.Message);
+            }
         }
     }
 }

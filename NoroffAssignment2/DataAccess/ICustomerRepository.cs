@@ -10,5 +10,8 @@ namespace NoroffAssignment2.DataAccess
         IEnumerable<CustomerModel> GetPage(int limit, int offset);
         CustomerModel GetById(int id);
         CustomerModel GetByName(string firstName, string lastName);
+
+        void AddCustomer(CustomerModel customer);
+        void UpdateCustomer(CustomerModel customer);
     }
 }

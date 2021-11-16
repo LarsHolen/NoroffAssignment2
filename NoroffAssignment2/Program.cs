@@ -16,10 +16,31 @@ namespace NoroffAssignment2
 
             ICustomerRepository customerRepository = new CustomerRepository();
 
+            CustomerModel testCustomer = new()
+            {
+                CustomerId = 61,
+                FirstName = "UPDATED",
+                LastName = "UPDATED",
+                Company = "UPDATED",
+                Address = "UPDATED",
+                State = "UPDATED",
+                City = "UPDATED",
+                Country = "UPDATED",
+                PostalCode = "UPDATED",
+                Phone = "TesUPDATEDt",
+                Fax = "UPDATED",
+                Email = "UPDATED",
+                SupportRepId = 1
+            };
 
+            // Updating customer
+            customerRepository.UpdateCustomer(testCustomer);
 
+            // Adding customer
+            //customerRepository.AddCustomer(testCustomer);
             List<CustomerModel> customerList = new();
 
+            
             //Getall:
             //List<CustomerModel> customerList = (List<CustomerModel>)customerRepository.GetAll();
             //customerList.Add(customerRepository.GetById(1));
