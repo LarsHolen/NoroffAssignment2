@@ -22,7 +22,8 @@ namespace NoroffAssignment2
 
             //Getall:
             //List<CustomerModel> customerList = (List<CustomerModel>)customerRepository.GetAll();
-            customerList.Add(customerRepository.GetById(1));
+            //customerList.Add(customerRepository.GetById(1));
+            customerList = (List<CustomerModel>)customerRepository.GetPage(10,10);
 
             foreach (var customer  in customerList)
             {

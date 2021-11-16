@@ -7,6 +7,8 @@ namespace NoroffAssignment2.DataAccess
     public interface ICustomerRepository : IRepository
     {
         IEnumerable<CustomerModel> GetAll();
+        IEnumerable<CustomerModel> GetPage(int limit, int offset);
         CustomerModel GetById(int id);
+        CustomerModel GetByName(string firstName, string lastName);
     }
 }
