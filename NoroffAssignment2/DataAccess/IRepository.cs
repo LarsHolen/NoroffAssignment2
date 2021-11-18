@@ -4,6 +4,6 @@ namespace NoroffAssignment2.DataAccess
 {
     public interface IRepository
     {
-        SqlConnectionStringBuilder Builder { get; }
+        SqlConnectionStringBuilder Builder { get; init; }
     }
 }

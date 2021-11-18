@@ -8,7 +8,7 @@ namespace NoroffAssignment2.DataAccess
 {
     public class CustomerRepository : ICustomerRepository
     {
-        public SqlConnectionStringBuilder Builder { get; set; }
+        public SqlConnectionStringBuilder Builder { get; init; }
         public CustomerRepository()
         {
             Builder = new() { DataSource = "DESKTOP-UD2KPSV\\SQLEXPRESS", InitialCatalog = "Chinook", IntegratedSecurity = true };
@@ -169,12 +169,15 @@ namespace NoroffAssignment2.DataAccess
                 using SqlConnection connection = new(Builder.ConnectionString);
                 connection.Open();
 
-                string sql = "SELECT * FROM Customer where (FirstName LIKE @firstName AND LastName LIKE @lastName) FETCH FIRST";
+                string sql = "SELECT * FROM Customer WHERE FirstName LIKE @firstName AND LastName LIKE @lastName";
 
-
+                string firstN = "%" + firstName + "%";
+                string lastN = "%" + lastName + "%";
+                Console.WriteLine(firstN + "--" + lastN );
+                Console.ReadLine();
                 using SqlCommand command = new(sql, connection);
-                command.Parameters.AddWithValue("@firstName", "%" + firstName + "%");
-                command.Parameters.AddWithValue("@lastName", "%" + lastName + "%");
+                command.Parameters.AddWithValue("@firstName", firstN);
+                command.Parameters.AddWithValue("@lastName",  lastN);
                 using SqlDataReader reader = command.ExecuteReader();
 
                 while (reader.Read())
@@ -206,6 +209,10 @@ namespace NoroffAssignment2.DataAccess
             return returnCustomer;
         }
 
+        /// <summary>
+        /// Adds a customer of type CustomerModel into the database
+        /// </summary>
+        /// <param name="customer"></param>
         public void AddCustomer(CustomerModel customer)
         {
             try
@@ -245,6 +252,10 @@ namespace NoroffAssignment2.DataAccess
             }
         }
 
+        /// <summary>
+        /// Updates a row in the Customer table with CustomerID equal to the parameter CustomerModel CustomerId value 
+        /// </summary>
+        /// <param name="customer"></param>
         public void UpdateCustomer(CustomerModel customer)
         {
             try
@@ -285,6 +296,45 @@ namespace NoroffAssignment2.DataAccess
             {
                 Console.WriteLine("Sql exception msg:" + exception.Message);
             }
+        }
+
+        /// <summary>
+        /// Returns true/false if the input id exist as CustomerId in Customer Db
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns> bool </returns>
+        public bool GetCustomerIDExists(int id)
+        {
+            bool returnValue = false;
+            try
+            {
+                using SqlConnection connection = new(Builder.ConnectionString);
+                connection.Open();
+
+                string sql = "SELECT CASE WHEN EXISTS (SELECT * FROM Customer WHERE CustomerId = @id) THEN 'TRUE' ELSE 'FALSE' END";
+
+
+                using SqlCommand command = new(sql, connection);
+                command.Parameters.AddWithValue("@id", id);
+                using SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    if(reader.GetString(0) == "TRUE")
+                    {
+                        returnValue = true;
+                    } else
+                    {
+                        returnValue = false;
+                    }
+
+                }
+            }
+            catch (SqlException exception)
+            {
+                Console.WriteLine("Sql exception msg:" + exception.Message);
+            }
+            return returnValue;
         }
     }
 }
