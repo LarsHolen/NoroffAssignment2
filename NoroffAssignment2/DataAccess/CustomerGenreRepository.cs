@@ -1,6 +1,7 @@
 ﻿using NoroffAssignment2.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -13,9 +14,16 @@ namespace NoroffAssignment2.DataAccess
         public SqlConnectionStringBuilder Builder { get; init; }
         public CustomerGenreRepository()
         {
-            Builder = new() { DataSource = "DESKTOP-UD2KPSV\\SQLEXPRESS", InitialCatalog = "Chinook", IntegratedSecurity = true };
+            ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings["connString"];
+            string connectString = settings.ConnectionString;
+            Builder = new(connectString);
         }
 
+        /// <summary>
+        /// Gets the most populat genre for the CustomerID parameter. If multiple genres with the same count, multiple are returned
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>List<CustomerGenreModel></returns>
         public IEnumerable<CustomerGenreModel> GetAll(int id)
         {
 

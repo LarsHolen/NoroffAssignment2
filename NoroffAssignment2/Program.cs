@@ -17,8 +17,7 @@ namespace NoroffAssignment2
             ICustomerCountryRepository countryRepository = new CustomerCountryRepository();
             ICustomerSpenderRepository customerSpenderRepository = new CustomerSpenderRepository();
             ICustomerGenreRepository customerGenreRepository = new CustomerGenreRepository();
-            
-            
+
             UILogic(customerRepository, customerGenreRepository);
 
         }

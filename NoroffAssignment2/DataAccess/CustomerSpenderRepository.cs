@@ -1,6 +1,7 @@
 ﻿using NoroffAssignment2.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -11,12 +12,16 @@ namespace NoroffAssignment2.DataAccess
     public class CustomerSpenderRepository : ICustomerSpenderRepository
     {
         public SqlConnectionStringBuilder Builder { get; init; }
-
         public CustomerSpenderRepository()
         {
-            Builder = new() { DataSource = "DESKTOP-UD2KPSV\\SQLEXPRESS", InitialCatalog = "Chinook", IntegratedSecurity = true };
+            ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings["connString"];
+            string connectString = settings.ConnectionString;
+            Builder = new(connectString);
         }
-
+        /// <summary>
+        /// Returns a list of CustomerId/Total spendings ordered by the biggest spender first
+        /// </summary>
+        /// <returns>List<CustomerSpender></returns>
         public IEnumerable<CustomerSpenderModel> GetAll()
         {
             List<CustomerSpenderModel> returnList = new();
@@ -48,6 +53,12 @@ namespace NoroffAssignment2.DataAccess
             return returnList;
         }
 
+        /// <summary>
+        /// Returns a page with offset and limit of the CustomerSpender
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
         public IEnumerable<CustomerSpenderModel> GetPage(int limit, int offset)
         {
             List<CustomerSpenderModel> returnList = new();

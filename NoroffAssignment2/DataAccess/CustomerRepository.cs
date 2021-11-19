@@ -12,7 +12,9 @@ namespace NoroffAssignment2.DataAccess
         public SqlConnectionStringBuilder Builder { get; init; }
         public CustomerRepository()
         {
-            Builder = new() { DataSource = "DESKTOP-UD2KPSV\\SQLEXPRESS", InitialCatalog = "Chinook", IntegratedSecurity = true };
+            ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings["connString"];
+            string connectString = settings.ConnectionString;
+            Builder = new(connectString);
         }
         /// <summary>
         /// Getting all Customer enteries from datasource/Catalog from Builder/SqlConnectionStringBuilder

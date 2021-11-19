@@ -1,6 +1,7 @@
 ﻿using NoroffAssignment2.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -13,9 +14,15 @@ namespace NoroffAssignment2.DataAccess
         public SqlConnectionStringBuilder Builder { get; init; }
         public CustomerCountryRepository()
         {
-            Builder = new() { DataSource = "DESKTOP-UD2KPSV\\SQLEXPRESS", InitialCatalog = "Chinook", IntegratedSecurity = true };
+            ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings["connString"];
+            string connectString = settings.ConnectionString;
+            Builder = new(connectString);
         }
 
+        /// <summary>
+        /// Returns a list of all countries, sorted by the number of customers in each.  Ordered descending by number
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<CountryModel> GetAll()
         {
             List<CountryModel> returnList = new();
