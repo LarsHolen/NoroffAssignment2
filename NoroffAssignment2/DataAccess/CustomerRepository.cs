@@ -2,6 +2,7 @@
 using NoroffAssignment2.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.SqlClient;
 
 namespace NoroffAssignment2.DataAccess
@@ -173,8 +174,6 @@ namespace NoroffAssignment2.DataAccess
 
                 string firstN = "%" + firstName + "%";
                 string lastN = "%" + lastName + "%";
-                Console.WriteLine(firstN + "--" + lastN );
-                Console.ReadLine();
                 using SqlCommand command = new(sql, connection);
                 command.Parameters.AddWithValue("@firstName", firstN);
                 command.Parameters.AddWithValue("@lastName",  lastN);

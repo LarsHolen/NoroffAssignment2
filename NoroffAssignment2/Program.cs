@@ -12,30 +12,23 @@ namespace NoroffAssignment2
     {
         static void Main()
         {
-            // Initializing a new customer for testing
-
-            CustomerModel testCustomer = new()
-            {
-                CustomerId = 61,
-                FirstName = "UPDATED",
-                LastName = "UPDATED",
-                Company = "UPDATED",
-                Address = "UPDATED",
-                State = "UPDATED",
-                City = "UPDATED",
-                Country = "UPDATED",
-                PostalCode = "UPDATED",
-                Phone = "TesUPDATEDt",
-                Fax = "UPDATED",
-                Email = "UPDATED",
-                SupportRepId = 1
-            };
+          
             ICustomerRepository customerRepository = new CustomerRepository();
             ICustomerCountryRepository countryRepository = new CustomerCountryRepository();
             ICustomerSpenderRepository customerSpenderRepository = new CustomerSpenderRepository();
             ICustomerGenreRepository customerGenreRepository = new CustomerGenreRepository();
+            
+            
+            UILogic(customerRepository, customerGenreRepository);
 
-
+        }
+        /// <summary>
+        /// Logic for showing information on console and getting user input
+        /// </summary>
+        /// <param name="customerRepository"></param>
+        /// <param name="customerGenreRepository"></param>
+        private static void UILogic(ICustomerRepository customerRepository, ICustomerGenreRepository customerGenreRepository)
+        {
             WriteHeader();
             string input = GetInput();
             while (input.ToLower() != "q")
@@ -54,14 +47,17 @@ namespace NoroffAssignment2
                             Console.Write(item.Name + "(" + item.Count + ")\t");
                         }
                         break;
+
                     case "q":
                         break;
+
                     case "a":
                         customerList.Clear();
                         customerList = (List<CustomerModel>)customerRepository.GetAll();
                         Console.SetCursorPosition(0, 12);
                         WriteCustomersToConsole(customerList);
                         break;
+
                     case "s":
                         id = GetId();
                         if (id is null) break;
@@ -70,27 +66,35 @@ namespace NoroffAssignment2
                         customerList.Add(customer);
                         WriteCustomersToConsole(customerList);
                         break;
+
                     case "n":
                         string firstName = GetNameString("Firstname(q to cancel): ");
-                        if (firstName.ToLower() == "q") break;
+                        if (firstName.ToLower() == "q" || firstName == string.Empty) break;
                         string lastName = GetNameString("Lastname(q to cancel): ");
-                        if (lastName.ToLower() == "q") break;
+                        if (lastName.ToLower() == "q" || lastName == string.Empty) break;
                         customer = null;
                         customer = customerRepository.GetByName(firstName, lastName);
-                        Console.WriteLine(customer.FirstName);
-                        if (customer == null)
+                        if (customer == null || customer.CustomerId == 0)
                         {
                             Console.Clear();
                             Console.WriteLine("Customer not found");
-                            Console.WriteLine("Press enter");
-                            Console.ReadLine();
-                        } else
+                        }
+                        else
                         {
                             customerList.Clear();
                             customerList.Add(customer);
-                            Console.WriteLine(customerList.Count);
                             WriteCustomersToConsole(customerList);
                         }
+                        break;
+                    case "p":
+                        int? limit = GetIntInput("Enter a number for how many customers to load: ");
+                        if (limit == null) break;
+                        int? offset = GetIntInput("Enter a number for which customer ID to start from: ");
+                        if (offset == null) break;
+                        customerList.Clear();
+                        customerList = (List<CustomerModel>)customerRepository.GetPage((int)limit, (int)offset);
+                        WriteCustomersToConsole(customerList);
+
                         break;
 
                     default:
@@ -103,86 +107,48 @@ namespace NoroffAssignment2
                 WriteHeader();
                 input = GetInput();
             }
-
-
-
-
-
-            //TOP GENRE
-            /*
-            IEnumerable<CustomerGenreModel> genreList = customerGenreRepository.GetAll(1);
-            List<CustomerGenreModel> genList = (List<CustomerGenreModel>)genreList;
-            List<CustomerGenreModel> topList = new();
-            for (int i = 0; i < genList.Count; i++)
-            {
-               
-                if (i == 0)
-                {
-                    topList.Add(genList[i]);
-                } else if(i > 0 && genList[i].Count == genList[i-1].Count)
-                {
-                    Console.WriteLine("Hey");
-                    topList.Add(genList[i]);
-                } else
-                {
-                    break;
-                }
-               
-            }
-            foreach (var item in topList)
-            {
-                Console.WriteLine("Top Genre for customer with ID 3: " + item.Name);
-            }
-            //Console.WriteLine(" Top benre for customerId 1: " + genList[0].Name);
-            */
-
-
-
-            /* Get spenders test
-            IEnumerable<CustomerSpenderModel> spenderList = customerSpenderRepository.GetPage(10,0);
-            int spenders = 0;
-            foreach (var spender in spenderList)
-            {
-                Console.WriteLine(customerRepository.GetById(spender.CustomerId).FirstName + " spent: " + spender.TotalSpendt.ToString());
-                spenders++;
-            }
-            Console.WriteLine("Total spenders: " + spenders.ToString());
-            */
-            /*
-            var countryList = countryRepository.GetAll();
-            foreach (CountryModel country in countryList)
-            {
-                Console.WriteLine(country.Name + "\t \t" + country.NumberOfCustomers);
-            }
-            */
-
-
-
-
-            // Updating customer
-            //customerRepository.UpdateCustomer(testCustomer);
-
-            // Adding customer
-            //customerRepository.AddCustomer(testCustomer);
-            //List<CustomerModel> customerList = new();
-
-
-            //Getall:
-            //List<CustomerModel> customerList = (List<CustomerModel>)customerRepository.GetAll();
-            //customerList.Add(customerRepository.GetById(1));
-
-            /* GetPage
-            customerList = (List<CustomerModel>)customerRepository.GetPage(10,10);
-
-            foreach (var customer  in customerList)
-            {
-                Console.WriteLine(customer.FirstName);
-            }
-            */
         }
 
+        /// <summary>
+        /// Gets an integer input from user
+        /// </summary>
+        /// <param name="inputText"></param>
+        /// <returns> int? </returns>
+        private static int? GetIntInput(string inputText)
+        {
+            Console.Clear();
+            while (true)
+            {
+                int? inputInt = 0;
+                Console.SetCursorPosition(0, 20);
+                Console.Write(inputText);
+                string input = Console.ReadLine();
+                if (input.ToLower() == "q") return null;
+                try
+                {
+                    inputInt = int.Parse(input);
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine(inputText);
+                    return null;
+                }
+                return inputInt;
+            }
+        }
+
+        /// <summary>
+        /// Write customer ID, firstName, LastName, City and country to screen for all customermodels in customerList to console
+        /// </summary>
+        /// <param name="customerList"></param>
         private static void WriteCustomersToConsole(List<CustomerModel> customerList)
         {
+            Console.Clear();
+            if(customerList.Count < 1)
+            {
+                Console.WriteLine("No customers found!");
+                return;
+            }
             for (int i = 0; i < customerList.Count; i++)
             {
                 Console.SetCursorPosition(0, 12 + i);
@@ -211,7 +177,7 @@ namespace NoroffAssignment2
             Console.WriteLine("a = list all customers in DB");
             Console.WriteLine("s = list a single customer in DB by ID");
             Console.WriteLine("n = list a customer from name input");
-            Console.WriteLine("l = list a group of customers with input 'limit' and 'offset'");
+            Console.WriteLine("p = list a page of customers with input 'limit' and 'offset'");
             Console.WriteLine("q = quit");
         }
 
@@ -250,6 +216,11 @@ namespace NoroffAssignment2
             }
         }
 
+        /// <summary>
+        /// Clear screen and  write inputText at a set position and requests input from user  
+        /// </summary>
+        /// <param name="inputText"></param>
+        /// <returns> string </returns>
         private static string GetNameString(string inputText)
         {
             Console.Clear();
@@ -260,9 +231,8 @@ namespace NoroffAssignment2
             return inputName;
         }
 
-
         /// <summary>
-        /// Gets unput for the Input Options
+        /// Gets input for the Input Options
         /// </summary>
         /// <returns></returns>
         private static string GetInput()
@@ -271,60 +241,9 @@ namespace NoroffAssignment2
             Console.Write("Your input: ");
             return Console.ReadLine();
         }
-
-        /*
-        private static List<CustomerModel> GetCustomers()
-        {
-            SqlConnectionStringBuilder builder = new();
-
-            builder.DataSource = "DESKTOP-UD2KPSV\\SQLEXPRESS";
-            builder.InitialCatalog = "Chinook";
-            builder.IntegratedSecurity = true;
-
-            List<CustomerModel> customers = new();
-
-            try
-            {
-                using SqlConnection connection = new(builder.ConnectionString);
-                connection.Open();
-
-                string sql = "SELECT * FROM Customer";
-
-                using SqlCommand command = new(sql, connection);
-                using var reader = command.ExecuteReader();
-
-                while(reader.Read())
-                {
-                    CustomerModel customer = new()
-                    {
-                        CustomerId = reader.Get<int>("CustomerId"),
-                        FirstName = reader.Get<String>("FirstName"),
-                        LastName = reader.Get<String>("LastName"),
-                        Company = reader.Get<String>("Company"),
-                        Address = reader.Get<String>("Address"),
-                        City = reader.Get<String>("City"),
-                        State = reader.Get<String>("State"),
-                        Country = reader.Get<String>("Country"),
-                        PostalCode = reader.Get<String>("PostalCode"),
-                        Phone = reader.Get<String>("Phone"),
-                        Fax = reader.Get<String>("Fax"),
-                        Email = reader.Get<String>("Email"),
-                        SupportRepId = reader.Get<int>("SupportRepId")
-
-                    };
-                    customers.Add(customer);
-                }
-                return customers;
-            }
-            catch (SqlException e)
-            {
-                Console.WriteLine(e.Message);
-                return null;
-            }
-            
-        }
-        */
     }
+
+
 
     /// <summary>
     /// Found an extension that handle null and retrive data through columnName
