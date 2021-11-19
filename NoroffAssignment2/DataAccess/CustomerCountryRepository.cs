@@ -18,9 +18,8 @@ namespace NoroffAssignment2.DataAccess
             string connectString = settings.ConnectionString;
             Builder = new(connectString);
         }
-
         /// <summary>
-        /// Returns a list of all countries, sorted by the number of customers in each.  Ordered descending by number
+        /// Returns a list of all countries, sorted by the number of customers in each  Ordered descending by number
         /// </summary>
         /// <returns></returns>
         public IEnumerable<CountryModel> GetAll()
