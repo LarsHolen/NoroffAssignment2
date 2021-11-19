@@ -20,7 +20,7 @@ namespace NoroffAssignment2.DataAccess
         }
 
         /// <summary>
-        /// Gets the most populat genre for the CustomerID parameter.If multiple genres with the same count, multiple are returned
+        /// Gets the most populat genre for the CustomerID parameter. If multiple genres with the same count, multiple are returned
         /// </summary>
         /// <param name="id"></param>
         /// <returns>List<CustomerGenreModel></returns>
